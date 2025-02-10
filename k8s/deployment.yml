@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-node-app
+  namespace: node-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-node-app
+  template:
+    metadata:
+      labels:
+        app: my-node-app
+    spec:
+      containers:
+        - name: my-node-app
+          image: lozanoskim/my-node-app:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_URI
+              value: "mongodb://$(MONGO_USER):$(MONGO_PASS)@mongodb:27017/mydb"
+          envFrom:
+            - configMapRef:
+                name: node-app-config
+            - secretRef:
+                name: node-app-secret
